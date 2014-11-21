@@ -8,7 +8,7 @@ var timeout = require('./');
 
 it('should do HTTP request with a lot of time', function (done) {
 	var req = http.get('http://google.com', function (res) {
-		assert.equal(res.statusCode, 302);
+		assert.ok(res.statusCode > 300 && res.statusCode < 399);
 		done();
 	});
 
