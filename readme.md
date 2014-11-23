@@ -28,7 +28,7 @@ The request to watch on.
 ##### time
 
 *Required*  
-Type: `Number`
+Type: `number`
 
 Time in milliseconds before errors will be emitted and `request.abort()` call happens.
 
