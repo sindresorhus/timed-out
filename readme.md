@@ -2,7 +2,7 @@
 
 > Timeout HTTP/HTTPS requests
 
-Emit `ETIMEDOUT` or `ESOCKETTIMEDOUT` when ClientRequest is hanged.
+Emit Error object with `code` property equal `ETIMEDOUT` or `ESOCKETTIMEDOUT` when ClientRequest is hanged.
 
 ## Usage
 
