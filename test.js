@@ -22,6 +22,7 @@ it('should emit ETIMEDOUT when time is not enough', function (done) {
 
 	req.on('error', function (err) {
 		if (err.code === 'ETIMEDOUT') {
+			assert.equal(err.message, 'Connection timed out on request to google.com');
 			done();
 		}
 	});
@@ -55,6 +56,7 @@ describe('when only headers was sent', function () {
 
 		req.on('error', function (err) {
 			if (err.code === 'ESOCKETTIMEDOUT') {
+				assert.equal(err.message, 'Socket timed out on request to 0.0.0.0:8081');
 				done();
 			}
 		});
