@@ -35,11 +35,11 @@ describe('when only headers was sent', function () {
 
 	before(function (done) {
 		server = http.createServer(function (request, res) {
+			res.writeHead(200, {'content-type':'text/plain'});
+			res.write('waited');
 			setTimeout(function() {
-				res.writeHead(200, {'content-type':'text/plain'});
-				res.write('waited');
 				res.end();
-			}, 200);
+			}, 1000);
 		});
 
 		server.listen(8081, function (err) {
@@ -61,6 +61,6 @@ describe('when only headers was sent', function () {
 			}
 		});
 
-		timeout(req, 400);
+		timeout(req, 200);
 	});
 });
