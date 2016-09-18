@@ -17,45 +17,74 @@ it('should do HTTP request with a lot of time', function (done) {
 	timeout(req, 1000);
 });
 
-it('should emit ETIMEDOUT when time is not enough', function (done) {
-	var req = http.get('http://google.com', function () {});
+it('should emit ETIMEDOUT when connection timeout expires', function (done) {
+	// To prevent the connection from being established use a non-routable IP
+	// address. See https://tools.ietf.org/html/rfc5737#section-3
+	var req = http.get('http://192.0.2.1');
 
 	req.on('error', function (err) {
 		if (err.code === 'ETIMEDOUT') {
-			assert.equal(err.message, 'Connection timed out on request to google.com');
+			assert.equal(err.message, 'Connection timed out on request to 192.0.2.1');
 			done();
 		}
 	});
 
-	timeout(req, 1);
+	timeout(req, 200);
 });
 
-describe('when only headers was sent', function () {
+describe('when connection is established', function () {
 	var server;
 
 	before(function (done) {
-		server = http.createServer(function (request, res) {
-			res.writeHead(200, {'content-type':'text/plain'});
-			res.write('waited');
-			setTimeout(function() {
-				res.end();
-			}, 1000);
-		});
-
-		server.listen(8081, function (err) {
-			done(err);
-		});
+		server = http.createServer();
+		server.listen(8081, done);
 	});
 
 	after(function (done) {
 		server.close(done);
 	});
 
-	it('should emit ESOCKETTIMEDOUT', function (done) {
-		var req = http.get('http://0.0.0.0:8081', function () {});
+	it('should emit ESOCKETTIMEDOUT (no data)', function (done) {
+		server.once('request', function () {});
+
+		var req = http.get('http://0.0.0.0:8081');
 
 		req.on('error', function (err) {
 			if (err.code === 'ESOCKETTIMEDOUT') {
+				assert.equal(err.message, 'Socket timed out on request to 0.0.0.0:8081');
+				done();
+			}
+		});
+
+		timeout(req, 200);
+	});
+
+	it('should emit ESOCKETTIMEDOUT (only first chunk of body)', function (done) {
+		server.once('request', function (req, res) {
+			res.writeHead(200, {'content-type':'text/plain'});
+			setTimeout(function () {
+				res.write('chunk');
+			}, 100);
+		});
+
+		var called = false;
+		var body = '';
+		var req = http.get('http://0.0.0.0:8081');
+
+		req.on('response', function (res) {
+			called = true;
+			assert.equal(res.statusCode, 200);
+			assert.equal(res.headers['content-type'], 'text/plain');
+			res.setEncoding('utf8');
+			res.on('data', function (chunk) {
+				body += chunk;
+			});
+		});
+
+		req.on('error', function (err) {
+			if (err.code === 'ESOCKETTIMEDOUT') {
+				assert.ok(called);
+				assert.equal(body, 'chunk');
 				assert.equal(err.message, 'Socket timed out on request to 0.0.0.0:8081');
 				done();
 			}

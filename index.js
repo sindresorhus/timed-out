@@ -12,13 +12,19 @@ module.exports = function (req, time) {
 		req.emit('error', e);
 	}, time);
 
-	// Set additional timeout on socket - in case if remote
-	// server freeze after sending headers
-	req.setTimeout(time, function socketTimeoutHandler() {
-		req.abort();
-		var e = new Error('Socket timed out on request' + host);
-		e.code = 'ESOCKETTIMEDOUT';
-		req.emit('error', e);
+	// Clear the connection timeout timer once a socket is assigned to the
+	// request and is connected. Abort the request if there is no activity
+	// on the socket for more than `time` milliseconds.
+	req.on('socket', function assign(socket) {
+		socket.on('connect', function connect() {
+			clear();
+			socket.setTimeout(time, function socketTimeoutHandler() {
+				req.abort();
+				var e = new Error('Socket timed out on request' + host);
+				e.code = 'ESOCKETTIMEDOUT';
+				req.emit('error', e);
+			});
+		});
 	});
 
 	function clear() {
@@ -28,7 +34,5 @@ module.exports = function (req, time) {
 		}
 	}
 
-	return req
-		.on('response', clear)
-		.on('error', clear);
+	return req.on('error', clear);
 };
