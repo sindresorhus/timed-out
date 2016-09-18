@@ -30,7 +30,7 @@ The request to watch on.
 *Required*  
 Type: `number`
 
-Time in milliseconds before errors will be emitted and `request.abort()` call happens.
+Time in milliseconds to wait for `connect` event on socket and also time to wait on inactive socket.
 
 ## License
 
