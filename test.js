@@ -61,7 +61,7 @@ describe('when connection is established', function () {
 
 	it('should emit ESOCKETTIMEDOUT (only first chunk of body)', function (done) {
 		server.once('request', function (req, res) {
-			res.writeHead(200, {'content-type':'text/plain'});
+			res.writeHead(200, {'content-type': 'text/plain'});
 			setTimeout(function () {
 				res.write('chunk');
 			}, 100);

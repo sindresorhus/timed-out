@@ -1,7 +1,9 @@
 'use strict';
 
 module.exports = function (req, time) {
-	if (req.timeoutTimer) { return req; }
+	if (req.timeoutTimer) {
+		return req;
+	}
 
 	var host = req._headers ? (' to ' + req._headers.host) : '';
 
