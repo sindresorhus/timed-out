@@ -90,6 +90,42 @@ describe('when connection is established', function () {
 			}
 		});
 
-		timeout(req, 200);
+		timeout(req, {socket: 200, connect: 50});
+	});
+
+	it('should be able to only apply connect timeout', function (done) {
+		server.once('request', function (req, res) {
+			setTimeout(function () {
+				res.writeHead(200);
+				res.end('data');
+			}, 100);
+		});
+
+		var req = http.get('http://0.0.0.0:8081');
+
+		req.on('error', done);
+		req.on('finish', done);
+
+		timeout(req, {connect: 50});
+	});
+
+	it('should be able to only apply socket timeout', function (done) {
+		server.once('request', function (req, res) {
+			setTimeout(function () {
+				res.writeHead(200);
+				res.end('data');
+			}, 200);
+		});
+
+		var req = http.get('http://0.0.0.0:8081');
+
+		req.on('error', function (err) {
+			if (err.code === 'ESOCKETTIMEDOUT') {
+				assert.equal(err.message, 'Socket timed out on request to 0.0.0.0:8081');
+				done();
+			}
+		});
+
+		timeout(req, {socket: 50});
 	});
 });
