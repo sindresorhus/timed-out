@@ -28,9 +28,14 @@ The request to watch on.
 ##### time
 
 *Required*  
-Type: `number`
+Type: `number` or `object`
 
 Time in milliseconds to wait for `connect` event on socket and also time to wait on inactive socket.
+
+Or you can pass Object with following fields:
+
+- `connnect` - time to wait for connection
+- `socket`  - time to wait for activity on socket
 
 ## License
 

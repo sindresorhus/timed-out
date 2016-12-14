@@ -8,7 +8,7 @@ module.exports = function (req, time) {
 	var delays = isNaN(time) ? time : {socket: time, connect: time};
 	var host = req._headers ? (' to ' + req._headers.host) : '';
 
-	if (delays.connect) {
+	if (delays.connect !== undefined) {
 		req.timeoutTimer = setTimeout(function timeoutHandler() {
 			req.abort();
 			var e = new Error('Connection timed out on request' + host);
@@ -24,7 +24,7 @@ module.exports = function (req, time) {
 		socket.on('connect', function connect() {
 			clear();
 
-			if (delays.socket) {
+			if (delays.socket !== undefined) {
 				socket.setTimeout(delays.socket, function socketTimeoutHandler() {
 					req.abort();
 					var e = new Error('Socket timed out on request' + host);
