@@ -1,6 +1,6 @@
 {
   "name": "timed-out",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Emit `ETIMEDOUT` or `ESOCKETTIMEDOUT` when ClientRequest is hanged",
   "license": "MIT",
   "repository": "floatdrop/timed-out",
