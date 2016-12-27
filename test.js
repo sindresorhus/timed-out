@@ -128,4 +128,45 @@ describe('when connection is established', function () {
 
 		timeout(req, {socket: 50});
 	});
+
+	// Different requests may reuse one socket if keep-alive is enabled
+	it('should not add event handlers twice for the same socket', function (done) {
+		server.on('request', function (req, res) {
+			res.writeHead(200);
+			res.end('data');
+		});
+		var socket = null;
+		var keepAliveAgent = new http.Agent({
+			maxSockets: 1,
+			keepAlive: true
+		});
+
+		var reqOpts = {
+			hostname: '0.0.0.0',
+			port: 8081,
+			agent: keepAliveAgent
+		};
+
+		var req1 = http.get(reqOpts, function (resp) {
+			resp.resume();
+			var req2 = http.get(reqOpts, function (resp) {
+				resp.resume();
+				keepAliveAgent.destroy();
+			});
+			timeout(req2, 100);
+
+			req2.on('socket', function (sock) {
+				assert.equal(sock, socket);
+				assert.equal(sock.listeners('connect').filter(function (f) {
+					return f.name === 'connect';
+				}).length, 1);
+				return done();
+			});
+		});
+		timeout(req1, 100);
+
+		req1.on('socket', function (sock) {
+			socket = sock;
+		});
+	});
 });
