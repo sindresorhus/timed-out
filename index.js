@@ -22,6 +22,7 @@ module.exports = function (req, time) {
 	req.on('socket', function assign(socket) {
 		// Socket may come from Agent pool and may be already connected
 		if (socket._timedOutHandlerSet) {
+			clear();
 			return;
 		}
 

@@ -130,7 +130,7 @@ describe('when connection is established', function () {
 	});
 
 	// Different requests may reuse one socket if keep-alive is enabled
-	it.only('should not add event handlers twice for the same socket', function (done) {
+	it('should not add event handlers twice for the same socket', function (done) {
 		server.on('request', function (req, res) {
 			res.writeHead(200);
 			res.end('data');
