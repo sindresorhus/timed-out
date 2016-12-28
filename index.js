@@ -18,33 +18,36 @@ module.exports = function (req, time) {
 	}
 
 	// Clear the connection timeout timer once a socket is assigned to the
-	// request and is connected. Abort the request if there is no activity
-	// on the socket for more than `time` milliseconds.
+	// request and is connected.
 	req.on('socket', function assign(socket) {
 		// Socket may come from Agent pool and may be already connected
-		// .connecting is for node 6.x and ._connecting is fallback for older releases
-		if (!(socket.connecting || socket._connecting)) {
+		if (socket._timedOutHandlerSet) {
 			return;
 		}
 
-		socket.on('connect', function connect() {
-			clear();
-
-			if (delays.socket !== undefined) {
-				socket.setTimeout(delays.socket, function socketTimeoutHandler() {
-					req.abort();
-					var e = new Error('Socket timed out on request' + host);
-					e.code = 'ESOCKETTIMEDOUT';
-					req.emit('error', e);
-				});
-			}
-		});
+		socket._timedOutHandlerSet = true;
+		socket.on('connect', connect);
 	});
 
 	function clear() {
 		if (req.timeoutTimer) {
 			clearTimeout(req.timeoutTimer);
 			req.timeoutTimer = null;
+		}
+	}
+
+	function connect() {
+		clear();
+
+		if (delays.socket !== undefined) {
+			// Abort the request if there is no activity on the socket for more
+			// than `delays.socket` milliseconds.
+			this.setTimeout(delays.socket, function socketTimeoutHandler() {
+				req.abort();
+				var e = new Error('Socket timed out on request' + host);
+				e.code = 'ESOCKETTIMEDOUT';
+				req.emit('error', e);
+			});
 		}
 	}
 
