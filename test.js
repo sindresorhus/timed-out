@@ -4,6 +4,7 @@
 
 var assert = require('assert');
 var http = require('http');
+var net = require('net');
 var timeout = require('./');
 
 it('should do HTTP request with a lot of time', function (done) {
@@ -131,10 +132,11 @@ describe('when connection is established', function () {
 
 	// Different requests may reuse one socket if keep-alive is enabled
 	it('should not add event handlers twice for the same socket', function (done) {
-		server.on('request', function (req, res) {
+		server.once('request', function (req, res) {
 			res.writeHead(200);
 			res.end('data');
 		});
+
 		var socket = null;
 		var keepAliveAgent = new http.Agent({
 			maxSockets: 1,
@@ -157,16 +159,36 @@ describe('when connection is established', function () {
 
 			req2.on('socket', function (sock) {
 				assert.equal(sock, socket);
-				assert.equal(sock.listeners('connect').filter(function (f) {
-					return f.name === 'connect';
-				}).length, 1);
-				return done();
+				assert.equal(sock.listeners('connect').length, 0);
+				done();
 			});
 		});
 		timeout(req1, 100);
 
 		req1.on('socket', function (sock) {
 			socket = sock;
+		});
+	});
+
+	it('should set socket timeout if socket is already connected', function (done) {
+		server.once('request', function () {});
+
+		var socket = net.connect(8081, '0.0.0.0', function () {
+			var req = http.get({
+				createConnection: function () {
+					return socket;
+				},
+				hostname: '0.0.0.0',
+				port: 8081
+			});
+
+			req.on('error', function (err) {
+				if (err.code === 'ESOCKETTIMEDOUT') {
+					done();
+				}
+			});
+
+			timeout(req, 200);
 		});
 	});
 });

@@ -20,14 +20,13 @@ module.exports = function (req, time) {
 	// Clear the connection timeout timer once a socket is assigned to the
 	// request and is connected.
 	req.on('socket', function assign(socket) {
-		// Socket may come from Agent pool and may be already connected
-		if (socket._timedOutHandlerSet) {
-			clear();
+		// Socket may come from Agent pool and may be already connected.
+		if (!(socket.connecting || socket._connecting)) {
+			connect.call(socket);
 			return;
 		}
 
-		socket._timedOutHandlerSet = true;
-		socket.on('connect', connect);
+		socket.once('connect', connect);
 	});
 
 	function clear() {
