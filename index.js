@@ -5,7 +5,7 @@ module.exports = function (req, time) {
 		return req;
 	}
 
-	var delays = isNaN(time) ? time : {socket: time, connect: time};
+	var delays = isNaN(time) ? time : {connect: time};
 	var host = req._headers ? (' to ' + req._headers.host) : '';
 
 	if (delays.connect !== undefined) {

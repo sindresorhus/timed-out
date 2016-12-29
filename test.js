@@ -30,7 +30,7 @@ it('should emit ETIMEDOUT when connection timeout expires', function (done) {
 		}
 	});
 
-	timeout(req, 200);
+	timeout(req, {connect: 200});
 });
 
 describe('when connection is established', function () {
@@ -57,7 +57,7 @@ describe('when connection is established', function () {
 			}
 		});
 
-		timeout(req, 200);
+		timeout(req, {socket: 200});
 	});
 
 	it('should emit ESOCKETTIMEDOUT (only first chunk of body)', function (done) {
@@ -163,7 +163,7 @@ describe('when connection is established', function () {
 				done();
 			});
 		});
-		timeout(req1, 100);
+		timeout(req1, {socket: 100, connect: 100});
 
 		req1.on('socket', function (sock) {
 			socket = sock;
@@ -188,7 +188,7 @@ describe('when connection is established', function () {
 				}
 			});
 
-			timeout(req, 200);
+			timeout(req, {socket: 200, connect: 200});
 		});
 	});
 });
