@@ -30,12 +30,12 @@ The request to watch on.
 *Required*  
 Type: `number` or `object`
 
-Time in milliseconds to wait for `connect` event on socket.
+Time in milliseconds to wait for `connect` event on socket and also time to wait on inactive socket.
 
 Or you can pass Object with following fields:
 
 - `connect` - time to wait for connection
-- `socket`  - time to wait for activity on socket (this can break sockets from keep-alive pool)
+- `socket`  - time to wait for activity on socket
 
 ## License
 
