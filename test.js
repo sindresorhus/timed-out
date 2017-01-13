@@ -153,7 +153,7 @@ describe('when connection is established', function () {
 			resp.resume();
 			var req2 = http.get(reqOpts, function (resp) {
 				resp.resume();
-				socket.destroy();
+				keepAliveAgent.destroy();
 				server.removeAllListeners('request');
 				done();
 			});
@@ -217,7 +217,7 @@ describe('when connection is established', function () {
 			res.on('end', function () {
 				assert.equal(socket.destroyed, false);
 				assert.equal(socket._idleTimeout, -1);
-				socket.destroy();
+				agent.destroy();
 				done();
 			});
 		});
