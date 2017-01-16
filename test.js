@@ -30,7 +30,7 @@ it('should emit ETIMEDOUT when connection timeout expires', function (done) {
 		}
 	});
 
-	timeout(req, {connect: 200});
+	timeout(req, 200);
 });
 
 describe('when connection is established', function () {
@@ -57,7 +57,7 @@ describe('when connection is established', function () {
 			}
 		});
 
-		timeout(req, {socket: 200});
+		timeout(req, 200);
 	});
 
 	it('should emit ESOCKETTIMEDOUT (only first chunk of body)', function (done) {
@@ -132,7 +132,7 @@ describe('when connection is established', function () {
 
 	// Different requests may reuse one socket if keep-alive is enabled
 	it('should not add event handlers twice for the same socket', function (done) {
-		server.once('request', function (req, res) {
+		server.on('request', function (req, res) {
 			res.writeHead(200);
 			res.end('data');
 		});
@@ -154,16 +154,17 @@ describe('when connection is established', function () {
 			var req2 = http.get(reqOpts, function (resp) {
 				resp.resume();
 				keepAliveAgent.destroy();
+				server.removeAllListeners('request');
+				done();
 			});
 			timeout(req2, 100);
 
 			req2.on('socket', function (sock) {
 				assert.equal(sock, socket);
 				assert.equal(sock.listeners('connect').length, 0);
-				done();
 			});
 		});
-		timeout(req1, {socket: 100, connect: 100});
+		timeout(req1, 100);
 
 		req1.on('socket', function (sock) {
 			socket = sock;
@@ -188,7 +189,46 @@ describe('when connection is established', function () {
 				}
 			});
 
-			timeout(req, {socket: 200, connect: 200});
+			timeout(req, 200);
+		});
+	});
+
+	it('should clear socket timeout for keep-alive sockets', function (done) {
+		server.once('request', function (req, res) {
+			res.writeHead(200);
+			res.end('data');
+		});
+
+		var socket = null;
+		var agent = new http.Agent({
+			keepAlive: true,
+			maxSockets: 1
+		});
+
+		var options = {
+			hostname: '0.0.0.0',
+			agent: agent,
+			port: 8081
+		};
+
+		var req = http.get(options, function (res) {
+			assert.equal(socket._idleTimeout, 100);
+			res.resume();
+			res.on('end', function () {
+				assert.equal(socket.destroyed, false);
+				assert.equal(socket._idleTimeout, -1);
+				agent.destroy();
+				done();
+			});
+		});
+
+		timeout(req, 100);
+
+		req.on('socket', function (sock) {
+			sock.once('connect', function () {
+				assert.equal(sock._idleTimeout, 100);
+			});
+			socket = sock;
 		});
 	});
 });

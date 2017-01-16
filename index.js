@@ -5,7 +5,7 @@ module.exports = function (req, time) {
 		return req;
 	}
 
-	var delays = isNaN(time) ? time : {connect: time};
+	var delays = isNaN(time) ? time : {socket: time, connect: time};
 	var host = req._headers ? (' to ' + req._headers.host) : '';
 
 	if (delays.connect !== undefined) {
@@ -22,7 +22,7 @@ module.exports = function (req, time) {
 	req.on('socket', function assign(socket) {
 		// Socket may come from Agent pool and may be already connected.
 		if (!(socket.connecting || socket._connecting)) {
-			connect.call(socket);
+			connect();
 			return;
 		}
 
@@ -42,7 +42,7 @@ module.exports = function (req, time) {
 		if (delays.socket !== undefined) {
 			// Abort the request if there is no activity on the socket for more
 			// than `delays.socket` milliseconds.
-			this.setTimeout(delays.socket, function socketTimeoutHandler() {
+			req.setTimeout(delays.socket, function socketTimeoutHandler() {
 				req.abort();
 				var e = new Error('Socket timed out on request' + host);
 				e.code = 'ESOCKETTIMEDOUT';
