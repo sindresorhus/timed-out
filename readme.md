@@ -2,41 +2,40 @@
 
 > Timeout HTTP/HTTPS requests
 
-Emit Error object with `code` property equal `ETIMEDOUT` or `ESOCKETTIMEDOUT` when ClientRequest is hanged.
+Emits Error object with `code` property equal `ETIMEDOUT` or `ESOCKETTIMEDOUT` when ClientRequest is hanged.
+
 
 ## Usage
 
 ```js
-var get = require('http').get;
-var timeout = require('timed-out');
+const timedOut = require('timed-out');
+const http = require('http');
+const timedOut = require('timed-out');
 
-var req = get('http://www.google.ru');
-timeout(req, 2000); // Set 2 seconds limit
+const request = http.get('http://www.google.ru');
+timedOut(request, 2000); // Sets a 2 seconds limit
 ```
 
-### API
 
-#### timedout(request, time)
+## API
 
-##### request
+### timedout(request, time)
 
-*Required*  
-Type: [`ClientRequest`](http://nodejs.org/api/http.html#http_class_http_clientrequest)
+#### request
 
-The request to watch on.
+*Required*
+Type: [`ClientRequest`](https://nodejs.org/api/http.html#http_class_http_clientrequest)
 
-##### time
+The request to watch.
 
-*Required*  
-Type: `number` or `object`
+#### time
 
-Time in milliseconds to wait for `connect` event on socket and also time to wait on inactive socket.
+*Required*
+Type: `number | object`
 
-Or you can pass Object with following fields:
+Time in milliseconds to wait for a `connect` event on the socket and also time to wait on inactive socket.
 
-- `connect` - time to wait for connection
-- `socket`  - time to wait for activity on socket
+Or you can pass an object with the following fields:
 
-## License
-
-MIT © [Vsevolod Strukchinsky](floatdrop@gmail.com)
+- `connect` - Time to wait for a connection.
+- `socket`  - Time to wait for activity on the socket.
