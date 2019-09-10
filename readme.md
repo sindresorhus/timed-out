@@ -39,3 +39,16 @@ Or you can pass an object with the following fields:
 
 - `connect` - Time to wait for a connection.
 - `socket`  - Time to wait for activity on the socket.
+
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-timed-out?utm_source=npm-timed-out&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
