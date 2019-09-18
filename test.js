@@ -18,7 +18,7 @@ it('should do HTTP request with a lot of time', done => {
 	timeout(request, 1000);
 });
 
-it.skip('should emit ETIMEDOUT when connection timeout expires', done => {
+it('should emit ETIMEDOUT when connection timeout expires', done => {
 	// To prevent the connection from being established use a non-routable IP
 	// address. See https://tools.ietf.org/html/rfc5737#section-3
 	const request = http.get('http://192.0.2.1');
@@ -191,7 +191,7 @@ describe('when connection is established', () => {
 		});
 	});
 
-	it.skip('should clear socket timeout for keep-alive sockets', done => {
+	it('should clear socket timeout for keep-alive sockets', done => {
 		server.once('request', (request, response) => {
 			response.writeHead(200);
 			response.end('data');
@@ -214,7 +214,7 @@ describe('when connection is established', () => {
 			response.resume();
 			response.on('end', () => {
 				assert.equal(socket.destroyed, false);
-				assert.equal(socket.timeout, -1);
+				assert.equal(socket.timeout, 0);
 				agent.destroy();
 				done();
 			});
