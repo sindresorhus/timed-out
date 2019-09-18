@@ -219,7 +219,7 @@ describe('when connection is established', () => {
 				done();
 			});
 		});
-
+		request.setTimeout(100);
 		timeout(request, 100);
 
 		request.on('socket', socket_ => {
