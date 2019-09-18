@@ -223,9 +223,6 @@ describe('when connection is established', () => {
 		timeout(request, 100);
 
 		request.on('socket', socket_ => {
-			socket_.once('connect', () => {
-				assert.equal(socket_.timeout, 100);
-			});
 			socket = socket_;
 		});
 	});
