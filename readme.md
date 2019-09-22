@@ -1,4 +1,4 @@
-# timed-out [![Build Status](https://travis-ci.org/floatdrop/timed-out.svg?branch=master)](https://travis-ci.org/floatdrop/timed-out)
+# timed-out [![Build Status](https://travis-ci.org/sindresorhus/timed-out.svg?branch=master)](https://travis-ci.org/sindresorhus/timed-out)
 
 > Timeout HTTP/HTTPS requests
 
