@@ -8,8 +8,8 @@ Emits Error object with `code` property equal `ETIMEDOUT` or `ESOCKETTIMEDOUT` w
 ## Usage
 
 ```js
-const timedOut = require('timed-out');
 const http = require('http');
+const timedOut = require('timed-out');
 
 const request = http.get('http://www.google.ru');
 timedOut(request, 2000); // Sets a 2 seconds limit
