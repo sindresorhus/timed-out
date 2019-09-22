@@ -8,7 +8,6 @@ Emits Error object with `code` property equal `ETIMEDOUT` or `ESOCKETTIMEDOUT` w
 ## Usage
 
 ```js
-const timedOut = require('timed-out');
 const http = require('http');
 const timedOut = require('timed-out');
 
