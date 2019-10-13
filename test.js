@@ -210,11 +210,11 @@ describe('when connection is established', () => {
 		};
 
 		const request = http.get(options, response => {
-			assert.equal(!isNaN(socket.timeout) ? socket.timeout : socket._idleTimeout, 100);
+			assert.equal(isNaN(socket.timeout) ? socket._idleTimeout : socket.timeout, 100);
 			response.resume();
 			response.on('end', () => {
 				assert.equal(socket.destroyed, false);
-				assert.equal(!isNaN(socket.timeout) ? socket.timeout : socket._idleTimeout, !isNaN(socket.timeout) ? 0 : -1);
+				assert.equal(isNaN(socket.timeout) ? socket._idleTimeout : socket.timeout, isNaN(socket.timeout) ? -1 : 0);
 				agent.destroy();
 				done();
 			});
@@ -224,7 +224,7 @@ describe('when connection is established', () => {
 
 		request.on('socket', socket_ => {
 			socket_.once('connect', () => {
-				assert.equal(!isNaN(socket.timeout) ? socket.timeout : socket._idleTimeout, 100);
+				assert.equal(isNaN(socket.timeout) ? socket._idleTimeout : socket.timeout, 100);
 			});
 			socket = socket_;
 		});
