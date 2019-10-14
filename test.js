@@ -8,8 +8,8 @@ const timeout = require('.');
 const port = Math.floor((Math.random() * (60000 - 30000)) + 30000);
 
 // Helper functions to return socket timeout property and value
-const socketTimeout = socket => isNaN(socket.timeout) ? socket._idleTimeout : socket.timeout;
-const socketClosedValue = socket => isNaN(socket.timeout) ? -1 : 0;
+const socketTimeout = socket => ('timeout' in socket) ? socket.timeout : socket._idleTimeout;
+const socketClosedValue = socket => ('timeout' in socket) ? 0 : -1;
 
 it('should do HTTP request with a lot of time', done => {
 	const request = http.get('http://google.com', response => {
