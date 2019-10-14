@@ -7,6 +7,10 @@ const timeout = require('.');
 
 const port = Math.floor((Math.random() * (60000 - 30000)) + 30000);
 
+// Helper functions to return socket timeout property and value
+const socketTimeout = socket => isNaN(socket.timeout) ? socket._idleTimeout : socket.timeout;
+const socketClosedValue = socket => isNaN(socket.timeout) ? -1 : 0;
+
 it('should do HTTP request with a lot of time', done => {
 	const request = http.get('http://google.com', response => {
 		assert.ok(response.statusCode > 300 && response.statusCode < 399);
@@ -210,11 +214,11 @@ describe('when connection is established', () => {
 		};
 
 		const request = http.get(options, response => {
-			assert.equal(isNaN(socket.timeout) ? socket._idleTimeout : socket.timeout, 100);
+			assert.equal(socketTimeout(socket), 100);
 			response.resume();
 			response.on('end', () => {
 				assert.equal(socket.destroyed, false);
-				assert.equal(isNaN(socket.timeout) ? socket._idleTimeout : socket.timeout, isNaN(socket.timeout) ? -1 : 0);
+				assert.equal(socketTimeout(socket), socketClosedValue(socket));
 				agent.destroy();
 				done();
 			});
@@ -224,7 +228,7 @@ describe('when connection is established', () => {
 
 		request.on('socket', socket_ => {
 			socket_.once('connect', () => {
-				assert.equal(isNaN(socket.timeout) ? socket._idleTimeout : socket.timeout, 100);
+				assert.equal(socketTimeout(socket), 100);
 			});
 			socket = socket_;
 		});
