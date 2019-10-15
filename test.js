@@ -7,6 +7,10 @@ const timeout = require('.');
 
 const port = Math.floor((Math.random() * (60000 - 30000)) + 30000);
 
+// Helper functions to return socket timeout property and value
+const socketTimeout = socket => ('timeout' in socket) ? socket.timeout : socket._idleTimeout;
+const socketClosedValue = socket => ('timeout' in socket) ? 0 : -1;
+
 it('should do HTTP request with a lot of time', done => {
 	const request = http.get('http://google.com', response => {
 		assert.ok(response.statusCode > 300 && response.statusCode < 399);
@@ -18,7 +22,7 @@ it('should do HTTP request with a lot of time', done => {
 	timeout(request, 1000);
 });
 
-it.skip('should emit ETIMEDOUT when connection timeout expires', done => {
+it('should emit ETIMEDOUT when connection timeout expires', done => {
 	// To prevent the connection from being established use a non-routable IP
 	// address. See https://tools.ietf.org/html/rfc5737#section-3
 	const request = http.get('http://192.0.2.1');
@@ -191,7 +195,7 @@ describe('when connection is established', () => {
 		});
 	});
 
-	it.skip('should clear socket timeout for keep-alive sockets', done => {
+	it('should clear socket timeout for keep-alive sockets', done => {
 		server.once('request', (request, response) => {
 			response.writeHead(200);
 			response.end('data');
@@ -210,11 +214,11 @@ describe('when connection is established', () => {
 		};
 
 		const request = http.get(options, response => {
-			assert.equal(socket.timeout, 100);
+			assert.equal(socketTimeout(socket), 100);
 			response.resume();
 			response.on('end', () => {
 				assert.equal(socket.destroyed, false);
-				assert.equal(socket.timeout, -1);
+				assert.equal(socketTimeout(socket), socketClosedValue(socket));
 				agent.destroy();
 				done();
 			});
@@ -224,7 +228,7 @@ describe('when connection is established', () => {
 
 		request.on('socket', socket_ => {
 			socket_.once('connect', () => {
-				assert.equal(socket_.timeout, 100);
+				assert.equal(socketTimeout(socket), 100);
 			});
 			socket = socket_;
 		});
