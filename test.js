@@ -1,9 +1,8 @@
 /* global describe, before, after, it */
-'use strict';
-const {strict: assert} = require('assert');
-const http = require('http');
-const net = require('net');
-const timeout = require('.');
+import {strict as assert} from 'node:assert';
+import http from 'node:http';
+import net from 'node:net';
+import timedOut from './index.js';
 
 const port = Math.floor((Math.random() * (60000 - 30000)) + 30000);
 
@@ -19,7 +18,7 @@ it('should do HTTP request with a lot of time', done => {
 
 	request.on('error', done);
 
-	timeout(request, 1000);
+	timedOut(request, 1000);
 });
 
 it('should emit ETIMEDOUT when connection timeout expires', done => {
@@ -34,7 +33,7 @@ it('should emit ETIMEDOUT when connection timeout expires', done => {
 		}
 	});
 
-	timeout(request, 200);
+	timedOut(request, 200);
 });
 
 describe('when connection is established', () => {
@@ -61,7 +60,7 @@ describe('when connection is established', () => {
 			}
 		});
 
-		timeout(request, 200);
+		timedOut(request, 200);
 	});
 
 	it('should emit ESOCKETTIMEDOUT (only first chunk of body)', done => {
@@ -95,7 +94,7 @@ describe('when connection is established', () => {
 			}
 		});
 
-		timeout(request, {socket: 200, connect: 50});
+		timedOut(request, {socket: 200, connect: 50});
 	});
 
 	it('should be able to only apply connect timeout', done => {
@@ -111,7 +110,7 @@ describe('when connection is established', () => {
 		request.on('error', done);
 		request.on('finish', done);
 
-		timeout(request, {connect: 50});
+		timedOut(request, {connect: 50});
 	});
 
 	it('should be able to only apply socket timeout', done => {
@@ -131,7 +130,7 @@ describe('when connection is established', () => {
 			}
 		});
 
-		timeout(request, {socket: 50});
+		timedOut(request, {socket: 50});
 	});
 
 	// Different requests may reuse one socket if keep-alive is enabled
@@ -161,14 +160,14 @@ describe('when connection is established', () => {
 				server.removeAllListeners('request');
 				done();
 			});
-			timeout(request2, 100);
+			timedOut(request2, 100);
 
 			request2.on('socket', socket_ => {
 				assert.equal(socket_, socket);
 				assert.equal(socket_.listeners('connect').length, 0);
 			});
 		});
-		timeout(request1, 100);
+		timedOut(request1, 100);
 
 		request1.on('socket', socket_ => {
 			socket = socket_;
@@ -191,7 +190,7 @@ describe('when connection is established', () => {
 				}
 			});
 
-			timeout(request, 200);
+			timedOut(request, 200);
 		});
 	});
 
@@ -224,7 +223,7 @@ describe('when connection is established', () => {
 			});
 		});
 
-		timeout(request, 100);
+		timedOut(request, 100);
 
 		request.on('socket', socket_ => {
 			socket_.once('connect', () => {

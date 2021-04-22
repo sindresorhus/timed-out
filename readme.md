@@ -4,17 +4,15 @@
 
 Emits Error object with `code` property equal `ETIMEDOUT` or `ESOCKETTIMEDOUT` when ClientRequest is hanged.
 
-
 ## Usage
 
 ```js
-const http = require('http');
-const timedOut = require('timed-out');
+import http from 'node:http';
+import timedOut from 'timed-out';
 
 const request = http.get('http://www.google.ru');
 timedOut(request, 2000); // Sets a 2 seconds limit
 ```
-
 
 ## API
 
@@ -38,7 +36,6 @@ Or you can pass an object with the following fields:
 
 - `connect` - Time to wait for a connection.
 - `socket`  - Time to wait for activity on the socket.
-
 
 ## timed-out for enterprise
 

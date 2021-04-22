@@ -1,6 +1,4 @@
-'use strict';
-
-module.exports = (request, time) => {
+export default function timedOut(request, time) {
 	if (request.timeoutTimer) {
 		return request;
 	}
@@ -52,4 +50,4 @@ module.exports = (request, time) => {
 	};
 
 	return request.on('error', clear);
-};
+}

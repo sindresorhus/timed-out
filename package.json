@@ -4,8 +4,11 @@
 	"description": "Timeout HTTP/HTTPS requests",
 	"license": "MIT",
 	"repository": "sindresorhus/timed-out",
+	"funding": "https://github.com/sponsors/sindresorhus",
+	"type": "module",
+	"exports": "./index.js",
 	"engines": {
-		"node": ">=8"
+		"node": ">=12"
 	},
 	"scripts": {
 		"test": "xo && mocha"
@@ -24,7 +27,7 @@
 		"simple"
 	],
 	"devDependencies": {
-		"mocha": "^6.2.0",
-		"xo": "^0.24.0"
+		"mocha": "^8.3.2",
+		"xo": "^0.39.1"
 	}
 }
