@@ -1,6 +1,6 @@
 {
 	"name": "timed-out",
-	"version": "5.0.0",
+	"version": "6.0.0",
 	"description": "Timeout HTTP/HTTPS requests",
 	"license": "MIT",
 	"repository": "sindresorhus/timed-out",
