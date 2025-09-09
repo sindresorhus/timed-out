@@ -7,11 +7,12 @@
 	"funding": "https://github.com/sponsors/sindresorhus",
 	"type": "module",
 	"exports": "./index.js",
+	"sideEffects": false,
 	"engines": {
-		"node": ">=12"
+		"node": ">=20"
 	},
 	"scripts": {
-		"test": "xo && mocha"
+		"test": "xo && node --test"
 	},
 	"files": [
 		"index.js"
@@ -27,7 +28,6 @@
 		"simple"
 	],
 	"devDependencies": {
-		"mocha": "^8.3.2",
-		"xo": "^0.39.1"
+		"xo": "^1.2.2"
 	}
 }
